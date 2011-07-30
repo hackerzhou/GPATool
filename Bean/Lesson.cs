@@ -1,188 +1,105 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace GPATool.Bean
 {
+    public class LessonScore
+    {
+        public String DisplayScore { get; set; }
+        public double Value { get; set; }
+        public LessonScore(String d, double v)
+        {
+            DisplayScore = d;
+            Value = v;
+        }
+    }
+
     public class Lesson
     {
-        public const double A = 4;
-        public const double AM = 3.7;
-        public const double BP = 3.3;
-        public const double B = 3;
-        public const double BM = 2.7;
-        public const double CP = 2.3;
-        public const double C = 2;
-        public const double CM = 1.7;
-        public const double D = 1.3;
-        public const double DM = 1;
-        public const double F = 0;
-        private double score = 0;
-        private bool isStar = false;
+        private static LessonScore[] lessonScoreTypes = new LessonScore[] {
+            new LessonScore("A",4.0),
+            new LessonScore("A-",3.7),
+            new LessonScore("B+",3.3),
+            new LessonScore("B",3.0),
+            new LessonScore("B-",2.7),
+            new LessonScore("C+",2.3),
+            new LessonScore("C",2.0),
+            new LessonScore("C-",1.7),
+            new LessonScore("D",1.3),
+            new LessonScore("D-",1.0),
+            new LessonScore("F",0.0)
+        };
+        public bool IsStar { get; set; }
+        public String DetailCode { get; set; }
+        public int Id { get; set; }
+        public double Score { get; set; }
+        public String Name { get; set; }
+        public double Credit { get; set; }
+        public String Code { get; set; }
+        public String ScoreString { get; set; }
+        public String Semester { get; set; }
 
-        public bool IsStar
-        {
-            get { return isStar; }
-            set { isStar = value; }
-        }
-        private String detailCode = null;
-
-        public String DetailCode
-        {
-            get { return detailCode; }
-            set { detailCode = value; }
-        }
-
-        private int id = 0;
-
-        public int Id
-        {
-            get { return id; }
-            set { id = value; }
-        }
-        public double Score
-        {
-            get { return score; }
-            set { score = value; }
-        }
-        private String name = null;
-
-        public String Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
-        private double credit = 0;
-
-        public double Credit
-        {
-            get { return credit; }
-            set { credit = value; }
-        }
-        private String code = null;
-
-        public String Code
-        {
-            get { return code; }
-            set { code = value; }
-        }
-        private String scoreString = null;
-
-        public String ScoreString
-        {
-            get { return scoreString; }
-            set { scoreString = value; }
-        }
-        private String semester = null;
-
-        public String Semester
-        {
-            get { return semester; }
-            set { semester = value; }
-        }
         public override string ToString()
         {
-            return id + "\t" + semester + "\t" + code + "\t" + name + "\t" + credit + "\t" + scoreString;
+            return Id + "\t" + Semester + "\t" + Code + "\t" + Name + "\t" + Credit + "\t" + ScoreString;
         }
-        public double getScoreValue()
+
+        public double GetScoreValue()
         {
-            if (scoreString.Equals("A"))
-            {
-                return A;
-            }
-            else if (scoreString.Equals("A-"))
-            {
-                return AM;
-            }
-            else if (scoreString.Equals("B+"))
-            {
-                return BP;
-            }
-            else if (scoreString.Equals("B"))
-            {
-                return B;
-            }
-            else if (scoreString.Equals("B-"))
-            {
-                return BM;
-            }
-            else if (scoreString.Equals("C+"))
-            {
-                return CP;
-            }
-            else if (scoreString.Equals("C"))
-            {
-                return C;
-            }
-            else if (scoreString.Equals("C-"))
-            {
-                return CM;
-            }
-            else if (scoreString.Equals("D"))
-            {
-                return D;
-            }
-            else if (scoreString.Equals("D-"))
-            {
-                return DM;
-            }
-            else if (scoreString.Equals("F"))
-            {
-                return F;
-            }
-            else if (scoreString.Equals("X"))
-            {
-                return F;
-            }
-            return 0;
+            return GetScoreValue(this.ScoreString);
         }
-        public static double getScoreValue(String scoreString)
+
+        public double CalculateGPA(List<Lesson> list)
         {
-            if (scoreString.Equals("A"))
+            double sum = 0;
+            double creditPointsSum = 0;
+            foreach (Lesson l in list)
             {
-                return A;
+                if (!l.IsStar)
+                {
+                    sum = sum + (l.Credit * l.Score);
+                    creditPointsSum += l.Credit;
+                }
             }
-            else if (scoreString.Equals("A-"))
+            return (double)(sum / creditPointsSum);
+        }
+
+        public static String GetScoreDetailString(double score, double delta = 0.05)
+        {
+            String result = null;
+            double lowerBoundDelta = double.MaxValue;
+            String lowerBound = null;
+            double upperBoundDelta = double.MaxValue;
+            String upperBound = null;
+            foreach (LessonScore ls in lessonScoreTypes)
             {
-                return AM;
+                if (Math.Abs(score - ls.Value) < delta)
+                {
+                    return ls.DisplayScore;
+                }
+                if (score > ls.Value && score - ls.Value < lowerBoundDelta)
+                {
+                    lowerBound = ls.DisplayScore;
+                    lowerBoundDelta = score - ls.Value;
+                }
+                if (score < ls.Value && ls.Value - score < upperBoundDelta)
+                {
+                    upperBound = ls.DisplayScore;
+                    upperBoundDelta = ls.Value - score;
+                }
             }
-            else if (scoreString.Equals("B+"))
+            result = lowerBound + "到" + upperBound;
+            return result;
+        }
+
+        public static double GetScoreValue(String scoreString)
+        {
+            foreach (LessonScore ls in lessonScoreTypes)
             {
-                return BP;
-            }
-            else if (scoreString.Equals("B"))
-            {
-                return B;
-            }
-            else if (scoreString.Equals("B-"))
-            {
-                return BM;
-            }
-            else if (scoreString.Equals("C+"))
-            {
-                return CP;
-            }
-            else if (scoreString.Equals("C"))
-            {
-                return C;
-            }
-            else if (scoreString.Equals("C-"))
-            {
-                return CM;
-            }
-            else if (scoreString.Equals("D"))
-            {
-                return D;
-            }
-            else if (scoreString.Equals("D-"))
-            {
-                return DM;
-            }
-            else if (scoreString.Equals("F"))
-            {
-                return F;
-            }
-            else if (scoreString.Equals("X"))
-            {
-                return F;
+                if (ls.DisplayScore.Equals(scoreString))
+                {
+                    return ls.Value;
+                }
             }
             return 0;
         }
