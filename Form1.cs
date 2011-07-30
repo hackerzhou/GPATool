@@ -16,7 +16,6 @@ namespace GPATool
         private static Form1 instance = null;
         private static bool isAdmin = false;
         private static Thread updateThread;
-        private const double currentVersion = 1.1;
 
         public static Form1 getInstance()
         {
@@ -38,7 +37,7 @@ namespace GPATool
                 this.Text = "复旦大学绩点查询工具 v1.10 专业版 by hackerzhou";
             }
             ribbonTabItem4.Checked = ribbonTabItem1.Checked = ribbonTabItem2.Checked = true;
-            updateThread = new Thread(new ThreadStart(checkUpdate));
+            updateThread = new Thread(new ThreadStart(UpdateUtil.CheckUpdate));
             updateThread.Start();
         }
 
@@ -55,43 +54,7 @@ namespace GPATool
             scoreDistribution2.StopAllThreads();
         }
 
-        private void checkUpdate()
-        {
-            try
-            {
-                XmlDocument doc = new XmlDocument();
-                doc.XmlResolver = null;
-                doc.Load("http://wiki.hackerzhou.me/GPATool");
-                XmlNodeList list = doc.SelectNodes("//table[@id='updateData']/tr");
-                double versionValue = 0;
-                String downloadUrl = null;
-                foreach (XmlNode n in list)
-                {
-                    String version = n.ChildNodes[0].InnerText.Replace("v", "");
-                    String downloadTemp = n.ChildNodes[1].InnerText;
-                    double versionTemp = 0;
-                    double.TryParse(version, out versionTemp);
-                    if (versionTemp > versionValue)
-                    {
-                        versionValue = versionTemp;
-                        downloadUrl = HttpUtility.UrlDecode(downloadTemp);
-                    }
-                }
-                if (versionValue > currentVersion && downloadUrl != null && downloadUrl.StartsWith("http://hackerzhou.googlecode.com"))
-                {
-                    String upgradeFile = HTTPUtil.GetFileNameFromUrl(downloadUrl);
-                    String filePath = Environment.CurrentDirectory + "\\" + upgradeFile;
-                    bool success = HTTPUtil.SaveUrlContentToFile(downloadUrl, filePath);
-                    if (success)
-                    {
-                        MessageBox.Show("已下载更新版 v" + versionValue.ToString("0.00") + " 到 " + upgradeFile + "\n请解压覆盖旧版本应用更新", "更新");
-                    }
-                }
-            }
-            catch
-            {
-            }
-        }
+        
 
         public void StopAllThreads()
         {
