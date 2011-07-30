@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using GPATool.Bean;
+using System.Text.RegularExpressions;
 
 namespace GPATool.Util
 {
@@ -16,7 +17,7 @@ namespace GPATool.Util
             {
                 SQLiteConnectionStringBuilder connStr = new SQLiteConnectionStringBuilder();
                 connStr.DataSource = "data.s3db";
-                connStr.Password = "GPAToolScoreDistributionDb";
+                connStr.Password = "GPAToolScoreDistributionDb2011";
                 conn = new SQLiteConnection(connStr.ConnectionString);
                 conn.Open();
             }
@@ -67,6 +68,103 @@ namespace GPATool.Util
                 item.Scores.Add(si);
             }
             item.Scores.Sort(new ScoreItem());
+        }
+
+        public static List<ScoreDistributionItem> QueryTeacherSDChangeBySemester(ScoreDistributionItem item)
+        {
+            String sql = @"select
+                               c.id,
+                               s.name,
+                               l.lessonCode,
+                               l.lessonName,
+                               t.name,
+                               l.creditPoint,
+                               c.totalStudentNumber
+                           from
+                               course c, lesson l, semester s, teacher t
+                           where
+                               c.lesson_id = l.id
+                               and c.semester_id = s.id
+                               and c.teacher_id = t.id
+                               and t.name = '" + item.Teacher + "'"
+                          + @" and l.lessonName = '" + item.LessonName + "'"
+                          + @" and t.name != 'Unknown'
+                               order by s.name";
+            List<ScoreDistributionItem> result = new List<ScoreDistributionItem>();
+            SQLiteConnection conn = GetSqliteConnection();
+            SQLiteCommand cmd = conn.CreateCommand();
+            cmd.CommandText = sql;
+            SQLiteDataReader reader = cmd.ExecuteReader();
+            int i = 1;
+            while (reader.Read())
+            {
+                ScoreDistributionItem sdItem = new ScoreDistributionItem();
+                sdItem.Id = i++;
+                sdItem.CourseId = reader.GetInt32(0);
+                sdItem.Semester = reader.GetString(1);
+                sdItem.LessonCode = reader.GetString(2);
+                sdItem.LessonName = reader.GetString(3);
+                sdItem.Teacher = reader.GetString(4);
+                sdItem.Credits = reader.GetDouble(5);
+                sdItem.StudentCount = reader.GetInt32(6);
+                QueryScoreDistribution(sdItem);
+                result.Add(sdItem);
+            }
+            result = ScoreDistributionItem.MergeSameTeacherSemester(result);
+            foreach (ScoreDistributionItem sdi in result)
+            {
+                sdi.CalculateBenchMark();
+            }
+            return result;
+        }
+
+        public static List<ScoreDistributionItem> QueryLessonSDChangeByTeacher(ScoreDistributionItem item)
+        {
+            String sql = @"select
+                               c.id,
+                               s.name,
+                               l.lessonCode,
+                               l.lessonName,
+                               t.name,
+                               l.creditPoint,
+                               c.totalStudentNumber
+                           from
+                               course c, lesson l, semester s, teacher t
+                           where
+                               c.lesson_id = l.id
+                               and c.semester_id = s.id
+                               and c.teacher_id = t.id
+                               and l.lessonName = '" + item.LessonName + "'"
+                          + @" and s.name = '" + item.Semester + "'"
+                          + @" and t.name != 'Unknown' 
+                               order by t.name";
+            List<ScoreDistributionItem> result = new List<ScoreDistributionItem>();
+            SQLiteConnection conn = GetSqliteConnection();
+            SQLiteCommand cmd = conn.CreateCommand();
+            cmd.CommandText = sql;
+            SQLiteDataReader reader = cmd.ExecuteReader();
+            int i = 1;
+            while (reader.Read())
+            {
+                ScoreDistributionItem sdItem = new ScoreDistributionItem();
+                sdItem.Id = i++;
+                sdItem.CourseId = reader.GetInt32(0);
+                sdItem.Semester = reader.GetString(1);
+                sdItem.LessonCode = reader.GetString(2);
+                sdItem.LessonName = reader.GetString(3);
+                sdItem.Teacher = reader.GetString(4);
+                sdItem.Credits = reader.GetDouble(5);
+                sdItem.StudentCount = reader.GetInt32(6);
+                QueryScoreDistribution(sdItem);
+                result.Add(sdItem);
+            }
+            result = ScoreDistributionItem.MergeSameTeacherSemester(result);
+            foreach (ScoreDistributionItem sdi in result)
+            {
+                sdi.CalculateBenchMark();
+            }
+            result.Sort(new ScoreDistributionItem());
+            return result;
         }
 
         public static List<ScoreDistributionItem> Query(String semester, String lessonCodeContains

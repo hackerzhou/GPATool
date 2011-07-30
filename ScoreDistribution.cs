@@ -6,12 +6,15 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using GPATool.Bean;
 using GPATool.Util;
+using System.Threading;
 
 namespace GPATool
 {
     public partial class ScoreDistribution : UserControl
     {
         private List<ScoreDistributionItem> courseList = null;
+        private Thread tSDThread;
+        private Thread sSDThread;
         public ScoreDistribution()
         {
             InitializeComponent();
@@ -28,7 +31,7 @@ namespace GPATool
             listView1.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
             listView1.AutoResizeColumn(5, ColumnHeaderAutoResizeStyle.HeaderSize);
             listView1.AutoResizeColumn(6, ColumnHeaderAutoResizeStyle.HeaderSize);
-            listView2.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+            scoreDistributionChartPanel1.Visible = false;
             this.BeginInvoke(new LoadData(LoadDataHandler));
         }
 
@@ -121,7 +124,6 @@ namespace GPATool
             }
             listView1.Height = 430;
             Object para = (e == null) ? getQueryParameter(sender.ToString()) : getQueryParameter();
-            disableView();
             this.BeginInvoke(new QueryCourseDelegate(queryCourse), para);
         }
 
@@ -158,6 +160,7 @@ namespace GPATool
 
         private void queryCourse(Object args)
         {
+            disableView();
             Object[] o = (Object[])args;
             String semester = (String)o[0];
             String lessonCodeContains = (String)o[1];
@@ -184,11 +187,11 @@ namespace GPATool
             }
         }
 
+        delegate void LoadCourseListViewDelegate(List<ScoreDistributionItem> para);
         private void loadCourseListViewHandler(List<ScoreDistributionItem> para)
         {
             courseList = para;
             listView1.Items.Clear();
-            listView2.Items.Clear();
             foreach (ScoreDistributionItem s in para)
             {
                 listView1.Items.Add(new ListViewItem(new String[] { s.Id.ToString(), s.Semester, s.LessonCode, s.LessonName, s.Teacher, s.Credits.ToString(), s.StudentCount.ToString() }));
@@ -208,13 +211,15 @@ namespace GPATool
         {
             if (this.InvokeRequired)
             {
-                SetViewDelegate cb = new SetViewDelegate(enableView);
+                SetViewDelegate cb = new SetViewDelegate(disableView);
                 this.Invoke(cb);
             }
             else
             {
-                panel1.Visible = true;
-                panel2.Visible = listView1.Enabled = groupBox1.Enabled = button1.Visible = false;
+                scoreDistributionChartPanel1.HidePanel();
+                button1.Visible = listView1.Enabled = groupBox1.Enabled = false;
+                panel1.Show();
+                pictureBox1.Refresh();
             }
         }
 
@@ -227,8 +232,39 @@ namespace GPATool
             }
             else
             {
-                panel1.Visible = false;
-                listView1.Enabled = groupBox1.Enabled = button1.Visible = true;
+                panel1.Hide();
+                button1.Visible = groupBox1.Enabled = listView1.Enabled = true;
+            }
+        }
+
+        private void busyAnalysticView()
+        {
+            if (this.InvokeRequired)
+            {
+                SetViewDelegate cb = new SetViewDelegate(busyAnalysticView);
+                this.Invoke(cb);
+            }
+            else
+            {
+                button1.Enabled = listView1.Enabled = false;
+                pictureBox2.Visible = true;
+                pictureBox2.Refresh();
+                scoreDistributionChartPanel1.HidePanel();
+            }
+        }
+
+        private void unBusyAnalysticView()
+        {
+            if (this.InvokeRequired)
+            {
+                SetViewDelegate cb = new SetViewDelegate(unBusyAnalysticView);
+                this.Invoke(cb);
+            }
+            else
+            {
+                button1.Enabled = listView1.Enabled = true;
+                pictureBox2.Visible = false;
+                scoreDistributionChartPanel1.ShowPanel();
             }
         }
 
@@ -254,24 +290,21 @@ namespace GPATool
                     MessageBox.Show("数据查询出错！\n详细信息：" + e.Message);
                 }
             }
-            listView2.Items.Clear();
-            chart1.Series["Series1"].Points.Clear();
-            foreach (ScoreItem si in args.Scores)
+            String[][] listViewItems = new String[args.Scores.Count][];
+            DataPoint[] dps = new DataPoint[args.Scores.Count];
+            for (int i = 0;i<args.Scores.Count;i++)
             {
+                ScoreItem si = args.Scores[i];
                 String percentage = ((double)si.StudentCount / args.StudentCount).ToString("P");
-                listView2.Items.Add(new ListViewItem(new String[] { si.DisplayValue, si.StudentCount.ToString(), percentage }));
-                DataPoint p = new DataPoint(0, si.StudentCount);
-                p.Label = si.DisplayValue;
-                p.LabelBorderWidth = 100;
-                p.ToolTip = si.DisplayValue + " " + si.StudentCount + "人";
-                chart1.Series["Series1"].Points.Add(p);
+                listViewItems[i] = new String[] { si.DisplayValue, si.StudentCount.ToString(), percentage };
+                dps[i] = new DataPoint(0, si.StudentCount);
+                dps[i] .Label = si.DisplayValue;
+                dps[i] .AxisLabel = si.DisplayValue;
+                dps[i] .LabelBorderWidth = 100;
+                dps[i] .ToolTip = si.DisplayValue + " " + si.StudentCount + "人";
             }
-            panel2.Visible = true;
-        }
-
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            ListViewStripMenuHelper.CopyAllItemsToClipBoard(listView2);
+            scoreDistributionChartPanel1.SetPanelType(ScoreDistributionChartPanelType.SCORE_DISTRIBUTION_COURSE);
+            scoreDistributionChartPanel1.RefreshData(listViewItems,dps);
         }
 
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
@@ -282,6 +315,120 @@ namespace GPATool
         private void toolStripMenuItem3_Click(object sender, EventArgs e)
         {
             ListViewStripMenuHelper.CopySelectedItemsToClipBoard(listView1);
+        }
+
+        private void toolStripMenuItem4_Click(object sender, EventArgs e)
+        {
+            if (listView1.SelectedIndices.Count > 0)
+            {
+                ScoreDistributionItem i = courseList[listView1.SelectedIndices[0]];
+                if (i != null && !string.IsNullOrEmpty(i.Teacher) && !string.IsNullOrEmpty(i.LessonName))
+                {
+                    sSDThread = new Thread(new ParameterizedThreadStart(queryAnalyticsSD));
+                    sSDThread.Start(new object[] { i, "Semester" });
+                }
+                else
+                {
+                    MessageBox.Show("该课程信息不完整，无法进行继续查询！", "无法查询");
+                }
+            }
+        }
+
+        private void queryAnalyticsSD(Object o)
+        {
+            ScoreDistributionItem args = (ScoreDistributionItem)((Object[])o)[0];
+            String analyticsType= (String)((Object[])o)[1];
+            bool isSemesterAnalytics = "Semester".Equals(analyticsType);
+            busyAnalysticView();
+            List<ScoreDistributionItem> list = null;
+            try
+            {
+                if (isSemesterAnalytics)
+                {
+                    list = ScoreDistributionHelper.QueryTeacherSDChangeBySemester(args);
+                }
+                else
+                {
+                    list = ScoreDistributionHelper.QueryLessonSDChangeByTeacher(args);
+                }
+            }
+            catch (Exception e)
+            {
+                unBusyAnalysticView();
+                MessageBox.Show("数据查询出错！\n详细信息：" + e.Message);
+                return;
+            }
+            String[][] listViewItems = new String[list.Count][];
+            DataPoint[] dps = new DataPoint[list.Count];
+            for (int i = 0; i < list.Count; i++)
+            {
+                ScoreDistributionItem sdi = list[i];
+                dps[i] = new DataPoint(0, sdi.AverageScore);
+                dps[i].AxisLabel = " ";
+                listViewItems[i] = new String[] { isSemesterAnalytics ? sdi.Semester : sdi.Teacher, sdi.AverageScore.ToString("0.00"), sdi.Remark };
+                dps[i].ToolTip = (isSemesterAnalytics ? "学期：" + sdi.Semester : "教师：" + sdi.Teacher) + "\n平均成绩：" + sdi.AverageScore.ToString("0.00") + " (" + Lesson.GetScoreDetailString(sdi.AverageScore) + ")\n比例最大的成绩：" + sdi.Remark;
+                dps[i].MarkerStyle = MarkerStyle.Circle;
+                dps[i].MarkerSize = 10;
+            }
+            this.setSDChartPanelHandler(isSemesterAnalytics ? ScoreDistributionChartPanelType.SCORE_DISTRIBUTION_SEMESTER : ScoreDistributionChartPanelType.SCORE_DISTRIBUTION_TEACHER
+                , listViewItems, dps);
+            unBusyAnalysticView();
+        }
+
+        delegate void SetSDChartPanelDelegate(ScoreDistributionChartPanelType t, String[][] s, DataPoint[] d);
+        private void setSDChartPanelHandler(ScoreDistributionChartPanelType t, String[][] s, DataPoint[] d)
+        {
+            if (this.InvokeRequired)
+            {
+                SetSDChartPanelDelegate cb = new SetSDChartPanelDelegate(setSDChartPanelHandler);
+                this.Invoke(cb, t, s, d);
+            }
+            else
+            {
+                scoreDistributionChartPanel1.SetPanelType(t);
+                scoreDistributionChartPanel1.RefreshData(s, d);
+            }
+        }
+
+        private void toolStripMenuItem5_Click(object sender, EventArgs e)
+        {
+            if (listView1.SelectedIndices.Count > 0)
+            {
+                ScoreDistributionItem i = courseList[listView1.SelectedIndices[0]];
+                if (i != null && !string.IsNullOrEmpty(i.Teacher) && !string.IsNullOrEmpty(i.LessonName))
+                {
+                    tSDThread = new Thread(new ParameterizedThreadStart(queryAnalyticsSD));
+                    tSDThread.Start(new object[] { i, "Teacher" });
+                }
+                else
+                {
+                    MessageBox.Show("该课程信息不完整，无法进行继续查询！", "无法查询");
+                }
+            }
+        }
+
+        public void StopAllThreads()
+        {
+            try
+            {
+                if (tSDThread != null && tSDThread.ThreadState != ThreadState.Stopped)
+                {
+                    tSDThread.Interrupt();
+                }
+            }
+            catch
+            {
+            }
+            try
+            {
+                if (sSDThread != null && sSDThread.ThreadState != ThreadState.Stopped)
+                {
+                    sSDThread.Interrupt();
+                }
+            }
+            catch
+            {
+            }
         }
     }
 }

@@ -304,7 +304,10 @@ namespace GPATool
         {
             try
             {
-                thread.Interrupt();
+                if (thread != null && thread.ThreadState != ThreadState.Stopped)
+                {
+                    thread.Interrupt();
+                }
             }
             catch
             {

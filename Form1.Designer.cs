@@ -51,21 +51,21 @@ namespace GPATool
             this.buttonItem12 = new DevComponents.DotNetBar.ButtonItem();
             this.buttonItem13 = new DevComponents.DotNetBar.ButtonItem();
             this.ribbonControl1 = new DevComponents.DotNetBar.RibbonControl();
+            this.ribbonPanel4 = new DevComponents.DotNetBar.RibbonPanel();
+            this.scoreListView1 = new GPATool.ScoreListView();
             this.ribbonPanel2 = new DevComponents.DotNetBar.RibbonPanel();
             this.userConfigView1 = new GPATool.UserConfigView();
             this.ribbonPanel1 = new DevComponents.DotNetBar.RibbonPanel();
             this.scoreDistribution2 = new GPATool.ScoreDistribution();
-            this.ribbonPanel4 = new DevComponents.DotNetBar.RibbonPanel();
-            this.scoreListView1 = new GPATool.ScoreListView();
             this.ribbonTabItem4 = new DevComponents.DotNetBar.RibbonTabItem();
             this.ribbonTabItem1 = new DevComponents.DotNetBar.RibbonTabItem();
             this.ribbonTabItem2 = new DevComponents.DotNetBar.RibbonTabItem();
             this.tabControlPanel2 = new DevComponents.DotNetBar.TabControlPanel();
             this.styleManager1 = new DevComponents.DotNetBar.StyleManager();
             this.ribbonControl1.SuspendLayout();
+            this.ribbonPanel4.SuspendLayout();
             this.ribbonPanel2.SuspendLayout();
             this.ribbonPanel1.SuspendLayout();
-            this.ribbonPanel4.SuspendLayout();
             this.SuspendLayout();
             // 
             // office2007StartButton1
@@ -252,9 +252,9 @@ namespace GPATool
             // 
             this.ribbonControl1.BackgroundStyle.Class = "";
             this.ribbonControl1.CaptionVisible = true;
+            this.ribbonControl1.Controls.Add(this.ribbonPanel4);
             this.ribbonControl1.Controls.Add(this.ribbonPanel2);
             this.ribbonControl1.Controls.Add(this.ribbonPanel1);
-            this.ribbonControl1.Controls.Add(this.ribbonPanel4);
             this.ribbonControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ribbonControl1.Items.AddRange(new DevComponents.DotNetBar.BaseItem[] {
             this.ribbonTabItem4,
@@ -264,11 +264,50 @@ namespace GPATool
             this.ribbonControl1.Location = new System.Drawing.Point(4, 1);
             this.ribbonControl1.Name = "ribbonControl1";
             this.ribbonControl1.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
-            this.ribbonControl1.Size = new System.Drawing.Size(648, 647);
+            this.ribbonControl1.Size = new System.Drawing.Size(656, 647);
             this.ribbonControl1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.ribbonControl1.TabGroupHeight = 14;
             this.ribbonControl1.TabIndex = 20;
             this.ribbonControl1.Text = "ribbonControl1";
+            // 
+            // ribbonPanel4
+            // 
+            this.ribbonPanel4.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
+            this.ribbonPanel4.Controls.Add(this.scoreListView1);
+            this.ribbonPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ribbonPanel4.Location = new System.Drawing.Point(0, 53);
+            this.ribbonPanel4.Name = "ribbonPanel4";
+            this.ribbonPanel4.Padding = new System.Windows.Forms.Padding(3, 0, 3, 3);
+            this.ribbonPanel4.Size = new System.Drawing.Size(648, 592);
+            // 
+            // 
+            // 
+            this.ribbonPanel4.Style.Class = "";
+            // 
+            // 
+            // 
+            this.ribbonPanel4.StyleMouseDown.Class = "";
+            // 
+            // 
+            // 
+            this.ribbonPanel4.StyleMouseOver.Class = "";
+            this.ribbonPanel4.TabIndex = 4;
+            // 
+            // scoreListView1
+            // 
+            this.scoreListView1.BackColor = System.Drawing.Color.Transparent;
+            this.scoreListView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            gpaInfo1.Gpa = null;
+            gpaInfo1.Major = null;
+            gpaInfo1.Name = null;
+            gpaInfo1.TotalCredit = null;
+            this.scoreListView1.GpaInfo = gpaInfo1;
+            this.scoreListView1.IsNormal = true;
+            this.scoreListView1.Location = new System.Drawing.Point(3, 0);
+            this.scoreListView1.Margin = new System.Windows.Forms.Padding(4);
+            this.scoreListView1.Name = "scoreListView1";
+            this.scoreListView1.Size = new System.Drawing.Size(642, 589);
+            this.scoreListView1.TabIndex = 0;
             // 
             // ribbonPanel2
             // 
@@ -292,6 +331,7 @@ namespace GPATool
             // 
             this.ribbonPanel2.StyleMouseOver.Class = "";
             this.ribbonPanel2.TabIndex = 2;
+            this.ribbonPanel2.Visible = false;
             // 
             // userConfigView1
             // 
@@ -337,48 +377,9 @@ namespace GPATool
             this.scoreDistribution2.Size = new System.Drawing.Size(649, 556);
             this.scoreDistribution2.TabIndex = 0;
             // 
-            // ribbonPanel4
-            // 
-            this.ribbonPanel4.ColorSchemeStyle = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
-            this.ribbonPanel4.Controls.Add(this.scoreListView1);
-            this.ribbonPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ribbonPanel4.Location = new System.Drawing.Point(0, 53);
-            this.ribbonPanel4.Name = "ribbonPanel4";
-            this.ribbonPanel4.Padding = new System.Windows.Forms.Padding(3, 0, 3, 3);
-            this.ribbonPanel4.Size = new System.Drawing.Size(638, 568);
-            // 
-            // 
-            // 
-            this.ribbonPanel4.Style.Class = "";
-            // 
-            // 
-            // 
-            this.ribbonPanel4.StyleMouseDown.Class = "";
-            // 
-            // 
-            // 
-            this.ribbonPanel4.StyleMouseOver.Class = "";
-            this.ribbonPanel4.TabIndex = 4;
-            this.ribbonPanel4.Visible = false;
-            // 
-            // scoreListView1
-            // 
-            this.scoreListView1.BackColor = System.Drawing.Color.Transparent;
-            this.scoreListView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            gpaInfo1.Gpa = null;
-            gpaInfo1.Major = null;
-            gpaInfo1.Name = null;
-            gpaInfo1.TotalCredit = null;
-            this.scoreListView1.GpaInfo = gpaInfo1;
-            this.scoreListView1.IsNormal = true;
-            this.scoreListView1.Location = new System.Drawing.Point(2, 1);
-            this.scoreListView1.Margin = new System.Windows.Forms.Padding(4);
-            this.scoreListView1.Name = "scoreListView1";
-            this.scoreListView1.Size = new System.Drawing.Size(649, 556);
-            this.scoreListView1.TabIndex = 0;
-            // 
             // ribbonTabItem4
             // 
+            this.ribbonTabItem4.Checked = true;
             this.ribbonTabItem4.Name = "ribbonTabItem4";
             this.ribbonTabItem4.Panel = this.ribbonPanel4;
             this.ribbonTabItem4.Text = "成绩查询";
@@ -391,7 +392,6 @@ namespace GPATool
             // 
             // ribbonTabItem2
             // 
-            this.ribbonTabItem2.Checked = true;
             this.ribbonTabItem2.Name = "ribbonTabItem2";
             this.ribbonTabItem2.Panel = this.ribbonPanel2;
             this.ribbonTabItem2.Text = "参数配置";
@@ -427,14 +427,14 @@ namespace GPATool
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "复旦大学绩点查询工具 v1.01 标准版 by hackerzhou";
+            this.Text = "复旦大学绩点查询工具 v1.10 标准版 by hackerzhou";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ribbonControl1.ResumeLayout(false);
             this.ribbonControl1.PerformLayout();
+            this.ribbonPanel4.ResumeLayout(false);
             this.ribbonPanel2.ResumeLayout(false);
             this.ribbonPanel1.ResumeLayout(false);
-            this.ribbonPanel4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

@@ -50,11 +50,11 @@ namespace GPATool.Util
             }
             else if (tag.Equals("Score"))
             {
-                return Lesson.getScoreValue(xValue).CompareTo(Lesson.getScoreValue(yValue));
+                return Lesson.GetScoreValue(xValue).CompareTo(Lesson.GetScoreValue(yValue));
             }
             else
             {
-                return Lesson.getScoreValue(yValue).CompareTo(Lesson.getScoreValue(xValue));
+                return Lesson.GetScoreValue(yValue).CompareTo(Lesson.GetScoreValue(xValue));
             }
         }
     }

@@ -41,16 +41,16 @@ namespace GPATool.Util
         {
             String result = "";
             CookieContainer Cc = new CookieContainer();
-            HttpWebRequest req = HTTPUtil.getHttpRequest("http://uis2.fudan.edu.cn:82/amserver/UI/Login?Login.Token2=" + password + "&Login.code=" + code + "&Login.Token1=" + username, "GET", Cc, 15000, 15000, proxy, true);
+            HttpWebRequest req = HTTPUtil.GetHttpRequest("http://uis2.fudan.edu.cn:82/amserver/UI/Login?Login.Token2=" + password + "&Login.code=" + code + "&Login.Token1=" + username, "GET", Cc, 15000, 15000, proxy, true);
             using (WebResponse wr = req.GetResponse())
             {
             }
-            req = HTTPUtil.getHttpRequest("http://www.urp.fudan.edu.cn:84/epstar/app/fudan/ScoreManger/ScoreViewer/Student/Course.jsp", "GET", Cc, 15000, 15000, proxy, true);
+            req = HTTPUtil.GetHttpRequest("http://www.urp.fudan.edu.cn:84/epstar/app/fudan/ScoreManger/ScoreViewer/Student/Course.jsp", "GET", Cc, 15000, 15000, proxy, true);
             using (WebResponse wr = req.GetResponse())
             {
-                result = HTTPUtil.getStringFromStream(wr.GetResponseStream(),Encoding.GetEncoding("GB2312"));
+                result = HTTPUtil.GetStringFromStream(wr.GetResponseStream(),Encoding.GetEncoding("GB2312"));
             }
-            req = HTTPUtil.getHttpRequest("http://www.urp.fudan.edu.cn/logout.jsp", "GET", Cc, 15000, 15000, proxy, true);
+            req = HTTPUtil.GetHttpRequest("http://www.urp.fudan.edu.cn/logout.jsp", "GET", Cc, 15000, 15000, proxy, true);
             using (WebResponse wr = req.GetResponse())
             {
             }

@@ -74,7 +74,7 @@ namespace GPATool.Util
                 }
                 l.Semester = m.Groups["semester"].Value.Replace("~", "～").Replace("\r", "");
                 l.DetailCode = m.Groups["detailcode"].Value.Replace("\r", "");
-                l.Score = l.getScoreValue();
+                l.Score = l.GetScoreValue();
                 lessons.Add(l);
             }
             return lessons;

@@ -22,7 +22,10 @@ namespace GPATool
         {
             try
             {
-                fetchRSSThread.Interrupt();
+                if (fetchRSSThread != null && fetchRSSThread.ThreadState != ThreadState.Stopped)
+                {
+                    fetchRSSThread.Interrupt();
+                }
             }
             catch
             {
@@ -96,29 +99,34 @@ namespace GPATool
         private void button7_Click(object sender, EventArgs e)
         {
             String style = comboBox2.SelectedItem.ToString();
+            Form1 f = Form1.getInstance();
+            if (f == null)
+            {
+                return;
+            }
             if ("Office2007Black".Equals(style))
             {
-                Form1.getInstance().ChangeStyle(eStyle.Office2007Black);
+                f.ChangeStyle(eStyle.Office2007Black);
             }
             else if ("Office2007Blue".Equals(style))
             {
-                Form1.getInstance().ChangeStyle(eStyle.Office2007Blue);
+                f.ChangeStyle(eStyle.Office2007Blue);
             }
             else if ("Office2007Silver".Equals(style))
             {
-                Form1.getInstance().ChangeStyle(eStyle.Office2007Silver);
+                f.ChangeStyle(eStyle.Office2007Silver);
             }
             else if ("Office2007VistaGlass".Equals(style))
             {
-                Form1.getInstance().ChangeStyle(eStyle.Office2007VistaGlass);
+                f.ChangeStyle(eStyle.Office2007VistaGlass);
             }
             else if ("Office2010Silver".Equals(style))
             {
-                Form1.getInstance().ChangeStyle(eStyle.Office2010Silver);
+                f.ChangeStyle(eStyle.Office2010Silver);
             }
             else if ("Windows7Blue".Equals(style))
             {
-                Form1.getInstance().ChangeStyle(eStyle.Windows7Blue);
+                f.ChangeStyle(eStyle.Windows7Blue);
             }
             if (e != null)
             {

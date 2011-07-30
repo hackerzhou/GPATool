@@ -69,11 +69,13 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SQLite">
+    <Reference Include="System.Data.SQLite, Version=1.0.66.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>.\System.Data.SQLite.DLL</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml" />
@@ -85,6 +87,12 @@
     </Compile>
     <Compile Include="ScoreDistribution.Designer.cs">
       <DependentUpon>ScoreDistribution.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScoreDistributionChartPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ScoreDistributionChartPanel.Designer.cs">
+      <DependentUpon>ScoreDistributionChartPanel.cs</DependentUpon>
     </Compile>
     <Compile Include="UserConfigView.cs">
       <SubType>UserControl</SubType>
@@ -115,6 +123,9 @@
     <EmbeddedResource Include="ScoreDistribution.resx">
       <DependentUpon>ScoreDistribution.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ScoreDistributionChartPanel.resx">
+      <DependentUpon>ScoreDistributionChartPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ScoreListView.resx">
       <DependentUpon>ScoreListView.cs</DependentUpon>
     </EmbeddedResource>
@@ -135,7 +146,10 @@
     <EmbeddedResource Include="UserConfigView.resx">
       <DependentUpon>UserConfigView.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="CHANGELOG" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -150,6 +164,7 @@
     <Compile Include="Util\ParseHTML.cs" />
     <Compile Include="Util\RC2Util.cs" />
     <Compile Include="Util\ScoreHTMLUtil.cs" />
+    <None Include="README" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="21310421.ico" />
