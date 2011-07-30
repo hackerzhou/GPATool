@@ -55,11 +55,14 @@ namespace GPATool.Util
         {
             try
             {
+                String tempPath = path + ".part";
                 HttpWebRequest req = GetHttpRequest(url, "GET", null, 60000, 60000, XMLConfig.GetProxy(), true);
                 using (WebResponse wr = req.GetResponse())
                 {
-                    WriteStreamToFile(wr.GetResponseStream(), path);
+                    WriteStreamToFile(wr.GetResponseStream(), tempPath);
                 }
+                FileInfo info = new FileInfo(tempPath);
+                info.MoveTo(path);
                 return true;
             }
             catch
