@@ -16,7 +16,7 @@ namespace GPATool.Util
         public static String proxyUsername;
         public static String proxyPassword;
         public static String adminHardwareKey;
-        public static String adminHardwareId = AdminUtil.GetHardwareId();
+        public static String adminHardwareId;
         public static int styleIndex = 4;
         public static bool useAutoRefresh;
         public static int autoRefreshInterval = 30;
@@ -41,6 +41,7 @@ namespace GPATool.Util
             {
                 try
                 {
+                    adminHardwareId = AdminUtil.GetHardwareId();
                     XmlDocument doc = new XmlDocument();
                     doc.Load("Config.xml");
                     urpUsername = doc.SelectSingleNode("//Config/ScoreQuery/@urpUsername").InnerText;
