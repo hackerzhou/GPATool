@@ -264,7 +264,7 @@ namespace GPATool
             this.ribbonControl1.Location = new System.Drawing.Point(4, 1);
             this.ribbonControl1.Name = "ribbonControl1";
             this.ribbonControl1.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
-            this.ribbonControl1.Size = new System.Drawing.Size(656, 647);
+            this.ribbonControl1.Size = new System.Drawing.Size(2000, 2000);
             this.ribbonControl1.Style = DevComponents.DotNetBar.eDotNetBarStyle.StyleManagerControlled;
             this.ribbonControl1.TabGroupHeight = 14;
             this.ribbonControl1.TabIndex = 20;
@@ -418,8 +418,16 @@ namespace GPATool
             // Form1
             // 
             this.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            if (this.CurrentAutoScaleDimensions.Width != 96)
+            {
+                this.AutoScaleDimensions = new System.Drawing.SizeF(90F, 90F);
+            }
+            else
+            {
+                this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            }
+            this.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ClientSize = new System.Drawing.Size(656, 650);
             this.Controls.Add(this.ribbonControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;

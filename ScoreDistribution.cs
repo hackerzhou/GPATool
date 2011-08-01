@@ -122,7 +122,7 @@ namespace GPATool
                 MessageBox.Show("找不到给分数据库文件data.s3db！", "数据文件丢失");
                 return;
             }
-            listView1.Height = 430;
+            listView1.Height = 449;
             Object para = (e == null) ? getQueryParameter(sender.ToString()) : getQueryParameter();
             this.BeginInvoke(new QueryCourseDelegate(queryCourse), para);
         }
