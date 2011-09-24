@@ -21,6 +21,8 @@ namespace GPATool.Util
         public static bool useAutoRefresh;
         public static int autoRefreshInterval = 30;
         public static bool isAdmin;
+        public static String adminUsername;
+        public static String adminPassword;
         public static bool dirty = true;
 
         public static void WriteConfig()
@@ -55,6 +57,8 @@ namespace GPATool.Util
                     proxyUsername = doc.SelectSingleNode("//Config/Proxy/@proxyUsername").InnerText;
                     proxyPassword = doc.SelectSingleNode("//Config/Proxy/@proxyPassword").InnerText;
                     adminHardwareKey = doc.SelectSingleNode("//Config/Admin/@adminHardwareKey").InnerText;
+                    adminUsername = doc.SelectSingleNode("//Config/Admin/@adminUsername").InnerText;
+                    adminPassword = doc.SelectSingleNode("//Config/Admin/@adminPassword").InnerText;
                     styleIndex = int.Parse(doc.SelectSingleNode("//Config/Style/@styleIndex").InnerText);
                     isAdmin = AdminUtil.IsAdmin(adminHardwareKey);
                 }
@@ -89,6 +93,8 @@ namespace GPATool.Util
             XmlElement admin = doc.CreateElement("Admin");
             admin.SetAttribute("adminHardwareKey", adminHardwareKey);
             admin.SetAttribute("adminHardwareId", adminHardwareId);
+            admin.SetAttribute("adminUsername", adminUsername);
+            admin.SetAttribute("adminPassword", adminPassword);
             root.AppendChild(admin);
             XmlElement style = doc.CreateElement("Style");
             style.SetAttribute("styleIndex", styleIndex.ToString());

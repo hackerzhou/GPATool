@@ -25,7 +25,7 @@ namespace GPATool.Util
                         Assembly asm = Assembly.Load("GPAToolPro");
                         Type util = asm.GetType("GPAToolPro.AdminFunctionLib");
                         Object result = util.InvokeMember("GetAdminScoreHTMLString", BindingFlags.Static | BindingFlags.Public | BindingFlags.InvokeMethod
-                            , null, null, new object[] { username, password, code, proxy });
+                            , null, null, new object[] { username, XMLConfig.adminUsername, XMLConfig.adminPassword, code, proxy });
                         resultStr = (result == null && result is String) ? null : (String)result;
                     }
                 }
